@@ -5,6 +5,9 @@ set -e
 ENV=$1
 MEGATRON_PATCH_PATH=$2
 MEGATRON_PATH=${MEGATRON_PATCH_PATH}/Megatron-LM-240126
+# MEGATRON_PATH=${MEGATRON_PATCH_PATH}/Megatron-LM-240612
+# MEGATRON_PATH=${MEGATRON_PATCH_PATH}/Megatron-LM-240405
+# MEGATRON_PATH=${MEGATRON_PATCH_PATH}/PAI-Megatron-LM-240718
 export PYTHONPATH=${MEGATRON_PATH}:${MEGATRON_PATCH_PATH}:$PYTHONPATH
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 if [ $ENV = dsw ]; then
@@ -93,12 +96,12 @@ elif [ $PR = bf16 ]; then
 elif [ $PR = fp8 ]; then
     pr_options=" \
         --bf16 \
-        --no-fp8-wgrad \
         --fp8-format hybrid \
         --fp8-amax-compute-algo max \
         --fp8-amax-history-len 1024 \
         --transformer-impl transformer_engine"
         # --fp8-hybrid \
+        # --no-fp8-wgrad \
 fi
 
 
@@ -237,10 +240,15 @@ megatron_options="  \
         --no-rope-fusion \
         --expert-model-parallel-size ${EP} \
         --distributed-timeout-minutes 6000 \
-        --transformer-impl transformer_engine \
         --eod-mask-loss"
+        # --transformer-impl transformer_engine \
+	# --profile \
+	# --use-pytorch-profiler \
+	# --profile-step-start 6 \
+	# --profile-step-end 7 \
         # --save ${SAVED_PRETRAIN_CHECKPOINT_PATH} \
         # --no-masked-softmax-fusion \
+	# --reset-attention-mask \
 
 run_cmd="torchrun $DISTRIBUTED_ARGS pretrain_mcore_mistral.py
  ${megatron_options} ${pr_options} ${load_options} ${te_options} ${activation_checkpoint_options} ${do_options} ${group_gemm_options} ${flash_options} ${sp_options} ${gqa_options} ${moe_options}"

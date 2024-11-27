@@ -1,15 +1,7 @@
 # cd /workspace/Pai-Megatron-Patch/examples/mistral
 
-# export NCCL_DEBUG_SUBSYS=INIT,GRAPH,COLL
-# export NCCL_DEBUG=INFO
-# export NCCL_DEBUG_FILE=mixtral-8x7b-mbs2-rccl.%h.%p.log
-
-export RCCL_MSCCL_ENABLE=0
-export RCCL_MSCCLPP_ENABLE=0
-# export NCCL_P2P_DISABLE=1
-
 MBS=2
-GBS=32
+GBS=256
 TP=4
 PP=1
 EP=1
@@ -22,10 +14,8 @@ TE=true
 MOE=true
 SEQ_LEN=4096
 PAD_LEN=4096
-# SEQ_LEN=2048
-# PAD_LEN=2048
 MODEL_SIZE=7B
-PR=bf16 # fp8
+PR=fp8 # fp8
 OPT=false
 EXP_DIR=${PWD}/experiments
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
@@ -79,8 +69,8 @@ ${MOE} \
 ${EXP_DIR}/mistral-datasets/alpaca_zh-mistral-train.json   \
 ${EXP_DIR}/mistral-datasets/alpaca_zh-mistral-valid.json   \
 ${EXP_DIR}/model_utils/tokenizer_7b   \
-20   \
-5   \
+10   \
+2   \
 ${EXP_DIR}/output_mcore_mistral   \
 ${EP}   \
 ${GROUP_GEMM} \

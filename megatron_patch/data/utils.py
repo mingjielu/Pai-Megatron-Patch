@@ -55,6 +55,8 @@ def get_batch_on_this_tp_rank_original(data_iterator):
             args.reset_attention_mask,
             args.eod_mask_loss)
 
+        attention_mask = attention_mask.expand(args.micro_batch_size, -1, -1, -1)
+
         batch = {
             'tokens': tokens.cuda(non_blocking=True),
             'labels': labels.cuda(non_blocking=True),
